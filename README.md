@@ -9,6 +9,6 @@ The repository contains the data and codes necessary for reproducing the results
 
 ## How to run the program
 
-**First** Run the *1 mstops, variable selection.R*.
-**Second** Run the *2 prediction.R*.
+**First** Run the *1 mstops, variable selection.R*.  
+**Second** Run the *2 prediction.R*.  
 
