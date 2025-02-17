@@ -7,7 +7,7 @@ Currently, the package can be installed via GitHub
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ShuoStat/mboostIPs")
+devtools::install_github("ShuoStat/IPs_in_HD/mboostIPs")
 
 ```
 
