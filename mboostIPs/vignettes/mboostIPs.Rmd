@@ -1,0 +1,122 @@
+---
+title: "mboostIPs: Detect Influential Points for Gredient Boosting"
+author:
+- name: Shuo Wang
+  affiliation: 
+  - Institute of Medical Biometry and Statistics, University of Freiburg
+  email: wangsures@foxmail.com
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+
+output:
+   BiocStyle::html_document: default
+   BiocStyle::pdf_document: default
+link-citations: yes
+header-includes:
+    - \usepackage{setspace}
+    - \doublespacing
+    
+vignette: >
+  %\VignetteIndexEntry{Introduction to package mboostIPs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+Influential points(IPs) should be routinely conducted for any types of 
+regression models. However, it is rarely mentioned in high-dimension data.
+One of the possible reason is the lack of IPs detection tools. *mboostIPs* is 
+an extension of *mboost*, that help check the IPs specifically for *glmboost()*
+function (1, 2). The method is based on leave-one-out. The idea is to evaluate the 
+influence of a case by comparing the model fitted without the questioned cases to 
+the reference models. The function can identify IPs for variable selection or 
+prediction. This vignette provides an overview of the `mboostIPs` package. 
+
+# Installation
+
+You can install the `mboostIPs` package from GitHub:
+
+```{r, eval=FALSE}
+# Ensure devtools is installed
+# install.packages("devtools")
+devtools::install_github("ShuoStat/mboostIPs")
+```
+
+# Quick Start
+
+This example demonstrates how to use the *glmboostDrop1* function to identify 
+influential observations in your model:
+
+```{r}
+
+library(mboostIPs)
+data(golub99)
+
+# Prepare data
+X <- scale(golub99$X)
+y <- golub99$y
+foldid <- sample(rep(1:10, length = nrow(X)), nrow(X)) 
+cv <- sapply(1:max(foldid), function(x) as.numeric(foldid != x))
+
+# Fit model
+obj <- mboost::glmboost(X, y,
+                        family = mboost::Binomial(),
+                        control = mboost::boost_control(mstop = 140,
+                                                        nu = 0.1,
+                                                        risk = "inbag"),
+                        center = F)
+
+# Perform drop1 analysis
+drop1obj <- glmboostDrop1(obj,
+                          nCores = 1,
+                          fixMstop = NULL,
+                          aims = c("variableSelection", "prediction"),
+                          ref = "mean",
+                          folds = cv)
+
+```
+
+
+The function directly returns the influential scores for each observation.
+
+```{r}
+
+str(drop1obj, max.level = 1)
+
+```
+
+
+# Visualizing Influential Observations
+
+The input of *plot_Scores()* function is exactly the output of *glmboostDrop1()*.  
+
+```{r, fig.width = 8, fig.height = 3}
+par(mfrow = c(1, 2), mar = c(4, 2, 1, 1))
+plot_Scores(drop1obj, aims = c("variableSelection", "prediction"))
+```
+
+# Plot Influential Scores Across Boosting Iterations
+
+We also provide an function that visualizes the influential scores across the 
+boosting iterations. The plot is suppose to evaluate the effects of tuning 
+parameter selection on the IPs detection. 
+
+```{r, fig.width=8, fig.height = 3}
+par(mfrow = c(1, 2), mar = c(3, 3, 1, 1))
+plot_Path(drop1obj, ref = "mean", topN = 3, 
+          aims = c("variableSelection", "prediction"))
+```
+
+
+# References {.unnumbered}
+
+(1) Hothorn, T., Buehlmann, P., Kneib, T., Schmid, M., Hofner, B., Sobotka, F., & Scheipl, F. (2013). Package ‘mboost’.  
+(2) Hothorn, Torsten, and Peter Bühlmann. "mboost Illustrations." Seminar, 2005.
+
+# Session info {.unnumbered}
+
+```{r, echo = F}
+sessionInfo()
+```
+
+

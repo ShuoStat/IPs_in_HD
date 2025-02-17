@@ -1,0 +1,39 @@
+Package: mboostIPs
+Title: Influential Points Detection for Boosting Regression
+Version: 0.99.0
+Authors@R: 
+    person("Shuo", "Wang", , "wangsures@foxmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0000-0424-2160"))
+Description: Influential points(IPs) should be routinely conducted for any
+    types of regression models. However, it is rarely mentioned in
+    high-dimension data.  One of the possible reason is the lack of IPs
+    detection tools. mboostIPs is an extension of mboost, that help check
+    the IPs specifically for glmboost() function. The method is based on
+    leave-one-out. The idea is to evaluate the influence of a case by
+    comparing the model fitted without the questioned cases to the
+    reference models. The function can identify IPs for variable selection
+    or prediction.
+License: GPL-3
+URL: https://github.com/ShuoStat/mboostIPs
+BugReports: https://github.com/ShuoStat/mboostIPs
+Depends: 
+    R (>= 4.2)
+Imports: 
+    doParallel,
+    foreach,
+    graphics,
+    mboost,
+    parallel,
+    stats
+Suggests: 
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: TRUE
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
